@@ -3,6 +3,9 @@ import { NextResponse } from "next/server";
 import { hasSupabaseEnv } from "@/lib/env";
 import { getRoleDashboardPath } from "@/lib/auth/roles";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
+import type { Database } from "@/types/database";
+
+type UserRow = Database["public"]["Tables"]["users"]["Row"];
 
 function resolveNextPath(value: string | null) {
   if (!value) return "/dashboard";
@@ -32,10 +35,11 @@ export async function GET(request: Request) {
     const { data } = await supabase.auth.getUser();
 
     if (data.user) {
-      const { data: profile } = await (supabase as any)
+      const userId = data.user.id as UserRow["id"];
+      const { data: profile } = await supabase
         .from("users")
         .select("role")
-        .eq("id", data.user.id)
+        .eq("id", userId)
         .maybeSingle();
 
       if (profile?.role) {
