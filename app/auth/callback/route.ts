@@ -32,11 +32,10 @@ export async function GET(request: Request) {
     const { data } = await supabase.auth.getUser();
 
     if (data.user) {
-      const userId = data.user.id;
-      const { data: profile } = await supabase
+      const { data: profile } = await (supabase as any)
         .from("users")
         .select("role")
-        .eq("id", userId as any)
+        .eq("id", data.user.id)
         .maybeSingle();
 
       if (profile?.role) {
