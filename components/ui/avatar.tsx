@@ -1,4 +1,5 @@
 import * as React from "react";
+import Image, { type ImageProps } from "next/image";
 
 import { cn } from "@/lib/utils";
 
@@ -16,12 +17,22 @@ const Avatar = React.forwardRef<HTMLSpanElement, React.HTMLAttributes<HTMLSpanEl
 );
 Avatar.displayName = "Avatar";
 
-const AvatarImage = React.forwardRef<HTMLImageElement, React.ImgHTMLAttributes<HTMLImageElement>>(
-  ({ className, ...props }, ref) => (
-    <img ref={ref} className={cn("h-full w-full object-cover", className)} {...props} />
-  ),
-);
-AvatarImage.displayName = "AvatarImage";
+type AvatarImageProps = Omit<ImageProps, "width" | "height" | "alt"> & {
+  size?: number;
+  alt?: string;
+};
+
+function AvatarImage({ className, alt = "", size = 40, ...props }: AvatarImageProps) {
+  return (
+    <Image
+      width={size}
+      height={size}
+      alt={alt}
+      className={cn("h-full w-full object-cover", className)}
+      {...props}
+    />
+  );
+}
 
 const AvatarFallback = React.forwardRef<
   HTMLSpanElement,
